@@ -28,6 +28,7 @@ SECRET_KEY = (
 
 ALLOWED_HOSTS = ["localhost", ".vercel.app", "127.0.0.1"]
 
+
 load_dotenv()
 
 DATABASE_HOST = os.getenv("DB_HOST")
@@ -45,6 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "corsheaders",
     "apps.core",
     "apps.metrics",
 ]
@@ -57,6 +60,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
 ]
 
 ROOT_URLCONF = "config.urls"

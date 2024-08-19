@@ -2,6 +2,7 @@ from collections import defaultdict
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from django.db.models import Max
 from apps.core.models import Metrics
 from .serializers import MetricsSerializer
 from django.utils import timezone
@@ -27,9 +28,23 @@ def list_metrics(request):
     return Response(result, status=status.HTTP_200_OK)
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+# @api_view(['GET'])
+# def list_online_devices(request):
+#   time_threshold = timezone.now() - timedelta(minutes=5)
+#   device_ids = Metrics.objects.filter(timestamp__gte=time_threshold).values_list('deviceid', flat=True).distinct()
+#   result = [{"device_id": deviceid} for deviceid in device_ids]
+#   return Response(result, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def list_online_devices(request):
-  time_threshold = timezone.now() - timedelta(minutes=5)
-  device_ids = Metrics.objects.filter(timestamp__gte=time_threshold).values_list('deviceid', flat=True).distinct()
-  result = [{"deviceid": deviceid} for deviceid in device_ids]
-  return Response(result, status=status.HTTP_200_OK)
+    # time_threshold = timezone.now() - timedelta(minutes=5)
+    latest_entries = (
+        Metrics.objects.all()
+        .values('deviceid')
+        .annotate(latest_timestamp=Max('timestamp'))
+    )
+    
+    # Prepare the result as a list of dictionaries
+    result = [{"device_id": entry['deviceid'], "timestamp": entry['latest_timestamp']} for entry in latest_entries]
+    
+    return Response(result, status=status.HTTP_200_OK)
