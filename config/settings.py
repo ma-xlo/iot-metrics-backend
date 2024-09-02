@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "apps.core",
     "apps.metrics",
+    "apps.tags",
+    "apps.devices"
 ]
 
 MIDDLEWARE = [
