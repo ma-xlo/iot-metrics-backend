@@ -11,6 +11,16 @@ from django.db import connection
 
 @api_view(['GET', 'POST'])
 def list_device_tags(request):
+  if request.method == 'POST':
+    tag_name = request.data.get('tag')
+    device_id = request.data.get('device_id')
+
+    new_tag, created = Tags.objects.get_or_create(name=tag_name)
+    device_tag, created = TagDevice.objects.get_or_create(tag_id=new_tag.id, device_id=device_id)
+
+    serializer = TagDeviceSerializer(device_tag)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+   
   if request.method == 'GET':
     with connection.cursor() as cursor:
       cursor.execute('''
@@ -31,7 +41,6 @@ def detail_device_tags(request, device_id):
     device_tag = TagDevice.objects.get(id=device_id)
     serializer = TagDeviceSerializer(device_tag)
     return Response(serializer.data, status=status.HTTP_200_OK)
-  
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
