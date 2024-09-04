@@ -38,8 +38,8 @@ def list_device_tags(request):
 def detail_device_tags(request, device_id):
   
   if request.method == 'GET':
-    device_tag = TagDevice.objects.get(id=device_id)
-    serializer = TagDeviceSerializer(device_tag)
+    device_tag = TagDevice.objects.filter(device_id=device_id)
+    serializer = TagDeviceSerializer(device_tag, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
