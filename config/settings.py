@@ -96,7 +96,7 @@ WSGI_APPLICATION = "config.wsgi.app"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': 'device_metrics',
         'USER': 'device_metrics_usr',
         'PASSWORD': 'BJnjexVEAzLX',
