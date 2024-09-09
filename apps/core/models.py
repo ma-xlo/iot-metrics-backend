@@ -16,7 +16,7 @@ class Metrics(models.Model):
     timestamp = models.DateTimeField()
     ram_usage_value = models.FloatField(blank=True, null=True)
     ram_usage_percent = models.FloatField(blank=True, null=True)
-    wifi_signal_level = models.IntegerField(blank=True, null=True)
+    wifi_signal_strength = models.IntegerField(blank=True, null=True)
     cpu_usage_percent = models.FloatField(blank=True, null=True)
     ip_address = models.CharField(max_length=255, blank=True, null=True)
     wifi_ssid = models.CharField(max_length=255, blank=True, null=True)

@@ -67,6 +67,9 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'https://iot-metrics-front.vercel.app',
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+    # 'http://192.168.1.145:3000'
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -94,7 +97,8 @@ WSGI_APPLICATION = "config.wsgi.app"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        # 'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'device_metrics',
         'USER': 'device_metrics_usr',
         'PASSWORD': 'BJnjexVEAzLX',
