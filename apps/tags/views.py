@@ -15,6 +15,7 @@ def list_tags(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['GET'])
 def detail_tags(request, id):
   if request.method == 'GET':
     tag = Tags.objects.get(id=id)

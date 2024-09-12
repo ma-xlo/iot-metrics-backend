@@ -11,11 +11,11 @@ from datetime import timedelta
 @api_view(['GET'])
 def list_metrics(request):
     # Calculate the time 60 minutes ago from now
-    time_threshold = timezone.now() - timedelta(minutes=60)
+    time_threshold = timezone.now() - timedelta(minutes=420)
 
     if request.method == 'GET':
-        metrics = Metrics.objects.all()
-        # metrics = Metrics.objects.filter(timestamp__gte=time_threshold)
+        # metrics = Metrics.objects.all()
+        metrics = Metrics.objects.filter(timestamp__gte=time_threshold)
         serializer = MetricsSerializer(metrics, many=True)
         serialized_data = serializer.data
 
