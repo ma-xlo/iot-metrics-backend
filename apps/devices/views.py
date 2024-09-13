@@ -4,10 +4,33 @@ from rest_framework import status
 from apps.core.models import TagDevice, Tags, Metrics
 from django.db.models import Max
 from .serializers import TagDeviceSerializer
+from apps.metrics.serializers import MetricsSerializer
 from apps.tags.serializers import TagsSerializer
 from django.utils import timezone
 from datetime import timedelta
 from django.db import connection
+from apps.core.helpers import is_device_online
+
+@api_view(['GET'])
+def list_device_metrics(request, device_id):
+
+  if request.method == 'GET':
+      metrics = Metrics.objects.filter(deviceid=device_id)
+      serializer = MetricsSerializer(metrics, many=True)
+      serialized_data = serializer.data
+
+      device_tags = TagDevice.objects.filter(device_id__in=device_id)
+
+      device_data = {
+        "id": device_id,
+        "data": serialized_data,
+        "online": is_device_online(serialized_data),
+        "tags": device_tags
+      }
+
+      return Response(device_data, status=status.HTTP_200_OK)
+  return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 @api_view(['GET', 'POST'])
 def list_device_tags(request, device_id):
@@ -28,7 +51,6 @@ def list_device_tags(request, device_id):
     
 
     serializer = TagDeviceSerializer(device_tags, many=True)
-    print(serializer.data)
     return Response(serializer.data, status=status.HTTP_200_OK)
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -39,13 +61,3 @@ def detail_device_tags(request, device_id, tag_id):
     device_tag.delete()
     return Response({"message": "ok"}, status=status.HTTP_200_OK)  
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-# @api_view(['GET'])
-# def list_online_devices(request):
-#     latest_entries = (
-#         Metrics.objects.all() 
-#         .values('deviceid')
-#         .annotate(latest_timestamp=Max('timestamp'))
-#     )
-#     result = [{"device_id": entry['deviceid'], "timestamp": entry['latest_timestamp']} for entry in latest_entries]
-#     return Response(result, status=status.HTTP_200_OK)  

@@ -3,8 +3,8 @@ from . import views
 
 urlpatterns = [
     # Devices
+    path('devices/<str:device_id>/', views.list_device_metrics, name='list-device-metrics'),
     # path('devices/', views.list_devices, name='detail-device-tags'),
-    # path('devices/online/', views.list_online_devices, name='list-online-devices'),
     
     # Device Tags
     path('devices/<str:device_id>/tags/', views.list_device_tags, name='list-device-tags'),
