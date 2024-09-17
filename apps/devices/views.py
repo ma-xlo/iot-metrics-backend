@@ -10,6 +10,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import connection
 from apps.core.helpers import is_device_online
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 def list_device_metrics(request, device_id):
@@ -61,3 +64,35 @@ def detail_device_tags(request, device_id, tag_id):
     device_tag.delete()
     return Response({"message": "ok"}, status=status.HTTP_200_OK)  
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+@api_view(['POST'])
+def send_command(request, device_id):
+    try:
+        command = request.data.get("command")
+        if not command:
+            return Response({"error": "No command provided"}, status=400)
+
+        channel_layer = get_channel_layer()
+
+        if channel_layer is None:
+            return Response({"error": "Channel layer is None"}, status=500)
+
+        async_to_sync(channel_layer.group_send)(
+            f"device_{device_id}",
+            {
+                'type': 'send_command',
+                'message': command
+            }
+        )
+
+        # response = async_to_sync(channel_layer.receive)(f"device_{device_id}")
+        # result = response.get("response", "No response from device")
+        # return Response({"message": response}, status=200)
+
+        return Response({"message": f"Command result: ok"}, status=200)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

@@ -4,11 +4,24 @@
       "src": "config/wsgi.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "60mb", "runtime": "python3.12" }
+    },
+    {
+      "src": "config/asgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "60mb", "runtime": "python3.12" }
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/ws/(.*)", 
+      "dest": "config/asgi.py",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "/(.*)",  
       "dest": "config/wsgi.py",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {

@@ -26,7 +26,7 @@ SECRET_KEY = (
     "django-insecure-$227hjjmuq2e!)o^@2&#2v#+(-=@$v362o@8g#s9!2)tjn1)1a"
 )
 
-ALLOWED_HOSTS = ["localhost", ".vercel.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", ".vercel.app", "127.0.0.1", "192.168.1.145"]
 
 
 load_dotenv()
@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.metrics",
     "apps.tags",
-    "apps.devices"
+    "apps.devices",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -91,6 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.app"
+ASGI_APPLICATION = 'config.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -107,6 +109,11 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
