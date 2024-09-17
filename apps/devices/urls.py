@@ -3,6 +3,9 @@ from . import views
 
 urlpatterns = [
     # Devices
+    # path('devices/command/', views.send_command, name='send-command'),
+    path('devices/<str:device_id>/command/', views.send_command),
+
     path('devices/<str:device_id>/', views.list_device_metrics, name='list-device-metrics'),
     # path('devices/', views.list_devices, name='detail-device-tags'),
     
