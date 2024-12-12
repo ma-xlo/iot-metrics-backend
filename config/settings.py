@@ -97,33 +97,33 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mysql.connector.django',
-#         # 'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'device_metrics',
-#         'USER': 'device_metrics_usr',
-#         'PASSWORD': 'BJnjexVEAzLX',
-#         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
-#         'PORT': '3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
+        # 'ENGINE': 'django.db.backends.mysql',
         'NAME': 'device_metrics',
         'USER': 'device_metrics_usr',
         'PASSWORD': 'BJnjexVEAzLX',
         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
         'PORT': '3306',
-        'OPTIONS': {
-            'connect_timeout': 10,
-            'max_connections': 100,  
-        },
-        'CONN_MAX_AGE': 600,  
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mysql.connector.django',
+#         'NAME': 'device_metrics',
+#         'USER': 'device_metrics_usr',
+#         'PASSWORD': 'BJnjexVEAzLX',
+#         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'connect_timeout': 10,
+#             'max_connections': 100,  
+#         },
+#         'CONN_MAX_AGE': 600,  
+#     }
+# }
 
 CHANNEL_LAYERS = {
     'default': {
