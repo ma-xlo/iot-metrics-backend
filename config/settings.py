@@ -97,15 +97,30 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mysql.connector.django',
+#         # 'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'device_metrics',
+#         'USER': 'device_metrics_usr',
+#         'PASSWORD': 'BJnjexVEAzLX',
+#         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        # 'ENGINE': 'django.db.backends.mysql',
         'NAME': 'device_metrics',
         'USER': 'device_metrics_usr',
         'PASSWORD': 'BJnjexVEAzLX',
         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
         'PORT': '3306',
+        'OPTIONS': {
+            'pool_name': 'django_pool',
+            'pool_size': 10,  # Number of connections in the pool
+        },
     }
 }
 
@@ -157,3 +172,5 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DEBUG = True
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 5MB (ajuste conforme necessário)
