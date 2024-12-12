@@ -118,9 +118,10 @@ DATABASES = {
         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
         'PORT': '3306',
         'OPTIONS': {
-            'pool_name': 'django_pool',
-            'pool_size': 10,  # Number of connections in the pool
+            'connect_timeout': 10,
+            'max_connections': 100,  
         },
+        'CONN_MAX_AGE': 600,  
     }
 }
 
