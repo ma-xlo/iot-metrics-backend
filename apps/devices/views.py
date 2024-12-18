@@ -13,6 +13,23 @@ from apps.core.helpers import is_device_online
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from rest_framework.decorators import api_view
+from django.http import StreamingHttpResponse
+import json
+
+@api_view(['GET'])
+def device_data_stream(request, device_id):
+    def stream_metrics():
+        try:
+            queryset = Metrics.objects.filter(deviceid=device_id).order_by('timestamp').iterator(chunk_size=200)
+            for metric in queryset:
+                yield json.dumps(MetricsSerializer(metric).data) + "\n"
+
+        except Exception as e:
+            yield json.dumps({"error": str(e)})
+
+    response = StreamingHttpResponse(stream_metrics(), content_type="application/json")
+    response['Content-Disposition'] = 'inline; filename="device_metrics_stream.json"'
+    return response
 
 @api_view(['GET'])
 def list_device_metrics(request, device_id):
@@ -33,6 +50,7 @@ def list_device_metrics(request, device_id):
 
       return Response(device_data, status=status.HTTP_200_OK)
   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 @api_view(['GET', 'POST'])

@@ -7,7 +7,7 @@ urlpatterns = [
     path('devices/<str:device_id>/command/', views.send_command),
 
     path('devices/<str:device_id>/', views.list_device_metrics, name='list-device-metrics'),
-    # path('devices/', views.list_devices, name='detail-device-tags'),
+    path('devices/<str:device_id>/data-stream/', views.device_data_stream, name='device-data-stream'),
     
     # Device Tags
     path('devices/<str:device_id>/tags/', views.list_device_tags, name='list-device-tags'),

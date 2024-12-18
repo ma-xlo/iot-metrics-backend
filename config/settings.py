@@ -70,7 +70,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://iot-metrics-front.vercel.app',
     'http://127.0.0.1:3000',
     'http://localhost:3000',
-    # 'http://192.168.1.145:3000'
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -109,21 +108,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mysql.connector.django',
-#         'NAME': 'device_metrics',
-#         'USER': 'device_metrics_usr',
-#         'PASSWORD': 'BJnjexVEAzLX',
-#         'HOST': 'mysql-cyma.cjntq2liprpo.sa-east-1.rds.amazonaws.com',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'connect_timeout': 10,
-#             'max_connections': 100,  
-#         },
-#         'CONN_MAX_AGE': 600,  
-#     }
-# }
 
 CHANNEL_LAYERS = {
     'default': {
