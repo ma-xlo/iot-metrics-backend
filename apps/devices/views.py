@@ -20,36 +20,71 @@ import json
 def device_data_stream(request, device_id):
     def stream_metrics():
         try:
-            queryset = Metrics.objects.filter(deviceid=device_id).order_by('timestamp').iterator(chunk_size=200)
+            queryset = Metrics.objects.filter(deviceid=device_id).order_by('timestamp').iterator(chunk_size=1000)
             for metric in queryset:
                 yield json.dumps(MetricsSerializer(metric).data) + "\n"
-
         except Exception as e:
             yield json.dumps({"error": str(e)})
-
     response = StreamingHttpResponse(stream_metrics(), content_type="application/json")
     response['Content-Disposition'] = 'inline; filename="device_metrics_stream.json"'
     return response
 
 @api_view(['GET'])
 def list_device_metrics(request, device_id):
+    period = request.GET.get('period', None)
+    serializer_data = []
+    device_tags = []
+    today = timezone.now().date()
+    try:
+        if period == "today":
+            device_metrics = Metrics.objects.filter(deviceid=device_id, timestamp__date=today)
+            serializer_data = MetricsSerializer(device_metrics, many=True).data
+        elif period == "week":
+            one_week_ago = today - timedelta(days=7)
+            device_metrics = Metrics.objects.filter(deviceid=device_id, timestamp__date__range=[one_week_ago, today])
+            serializer_data = MetricsSerializer(device_metrics, many=True).data
+        elif period == "month":
+            one_month_ago = today - timedelta(days=30)
+            device_metrics = Metrics.objects.filter(deviceid=device_id, timestamp__date__range=[one_month_ago, today])
+            serializer_data = MetricsSerializer(device_metrics, many=True).data
+        else:
+          device_metrics = Metrics.objects.filter(deviceid=device_id).latest('timestamp')
+          serializer_data = [MetricsSerializer(device_metrics).data]
 
-  if request.method == 'GET':
-      metrics = Metrics.objects.filter(deviceid=device_id)
-      serializer = MetricsSerializer(metrics, many=True)
-      serialized_data = serializer.data
+        device_tags = TagDevice.objects.filter(device_id=device_id).values_list('tag_id', flat=True)
+        device_data = {
+            "id": device_id,
+            "data": serializer_data,
+            "online": is_device_online(serializer_data),
+            "tags": list(device_tags)  
+        }
+        return Response(device_data, status=status.HTTP_200_OK)
 
-      device_tags = TagDevice.objects.filter(device_id__in=device_id)
+    except Metrics.DoesNotExist:
+        return Response({"message": "Device metrics not found."}, status=status.HTTP_404_NOT_FOUND)
 
-      device_data = {
-        "id": device_id,
-        "data": serialized_data,
-        "online": is_device_online(serialized_data),
-        "tags": device_tags
-      }
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-      return Response(device_data, status=status.HTTP_200_OK)
-  return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+# @api_view(['GET'])
+# def list_device_metrics(request, device_id):
+
+#   if request.method == 'GET':
+#       metrics = Metrics.objects.filter(deviceid=device_id)
+#       serializer = MetricsSerializer(metrics, many=True)
+#       serialized_data = serializer.data
+
+#       device_tags = TagDevice.objects.filter(device_id__in=device_id)
+
+#       device_data = {
+#         "id": device_id,
+#         "data": serialized_data,
+#         "online": is_device_online(serialized_data),
+#         "tags": device_tags
+#       }
+
+#       return Response(device_data, status=status.HTTP_200_OK)
+#   return Response({"message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 
