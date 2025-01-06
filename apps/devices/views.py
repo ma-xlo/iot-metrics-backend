@@ -51,6 +51,15 @@ def list_device_metrics(request, device_id):
           device_metrics = Metrics.objects.filter(deviceid=device_id).latest('timestamp')
           serializer_data = [MetricsSerializer(device_metrics).data]
 
+        if not serializer_data:
+            device_data = {
+                "id": device_id,
+                "data": [],
+                "online": "false",
+                "tags": list(device_tags)  
+            }
+            return Response(device_data, status=status.HTTP_200_OK)
+        
         device_tags = TagDevice.objects.filter(device_id=device_id).values_list('tag_id', flat=True)
         device_data = {
             "id": device_id,
